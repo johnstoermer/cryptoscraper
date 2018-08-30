@@ -17,28 +17,30 @@ def getCoins():
 
 def addCoin(coin_href):
     coin_dict = {}
-    url = 'https://coinmarketcap.com' + coin_href + 'historical-data/'
+    url = 'https://coinmarketcap.com' + coin_href + 'historical-data/?start=20130428&end=' + datetime.now().strftime('%Y%m%d')
     page = requests.get(url)
     tree = html.fromstring(page.content)
     try:
         coin_name = tree.xpath('/html/body/div[2]/div/div[1]/div[3]/div[1]/h1/span/text()')[0].replace('(', '').replace(')', '')
         print(coin_name + ' started')
-        for i in range(1, 31):
-            try:
-                date = datetime.strptime(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[1]/text()'.format(i))[0], '%b %d, %Y').strftime('%m%d%y')
-                coin_dict[date] = {}
-                coin_dict[date]['open'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[2]/text()'.format(i))[0])
-                coin_dict[date]['high'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[3]/text()'.format(i))[0])
-                coin_dict[date]['low'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[4]/text()'.format(i))[0])
-                coin_dict[date]['close'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[5]/text()'.format(i))[0])
-                coin_dict[date]['volume'] = int(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[6]/text()'.format(i))[0].replace(',', ''))
-                #coin_dict[date]['market_cap'] = int(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[7]/text()'.format(i))[0].replace(',', '')) not all coins have market_cap
-            except:
-                print(coin_name + ' day ' + str(i) + ' DNE, breaking...')
-                break
     except:
         print('No historical data!')
         return None
+    count = 1
+    while True:
+        try:
+            date = datetime.strptime(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[1]/text()'.format(count))[0], '%b %d, %Y').strftime('%m%d%y')
+            coin_dict[date] = {}
+            coin_dict[date]['open'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[2]/text()'.format(count))[0])
+            coin_dict[date]['high'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[3]/text()'.format(count))[0])
+            coin_dict[date]['low'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[4]/text()'.format(count))[0])
+            coin_dict[date]['close'] = float(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[5]/text()'.format(count))[0])
+            coin_dict[date]['volume'] = int(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[6]/text()'.format(count))[0].replace(',', ''))
+            #coin_dict[date]['market_cap'] = int(tree.xpath('//*[@id="historical-data"]/div/div[2]/table/tbody/tr[{}]/td[7]/text()'.format(count))[0].replace(',', '')) not all coins have market_cap
+            count += 1
+        except:
+            print(coin_name + ' day ' + str(count) + ' DNE, breaking...')
+            break
     return [coin_dict, coin_name]
 
 def generateJSON(dict):
