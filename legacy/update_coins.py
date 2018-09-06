@@ -87,12 +87,13 @@ def MACD(df):
 def analyze(coin_name):
     coin_df = pd.read_csv('coins\\{}'.format(coin_name))
     coin_df = coin_df.set_index('date')
+    coin_df['rsi'] = RSI(coin_df['close'], 14)
     coin_df['macd'] = MACD(coin_df)
-    print(coin_df.describe())
+    print(coin_df)
 
 def main():
-    #update()
-    analyze('BTC')
+    update()
+    #analyze('BTC')
 
 if __name__ == '__main__':
     main()
