@@ -1,5 +1,5 @@
 # cryptoscraper
-cryptoscraper is a tool for scraping crypto price information from (https://coinmarketcap.com/ "CoinMarketCap")
+cryptoscraper is a tool for scraping crypto price information from [CoinMarketCap](https://coinmarketcap.com/ "CoinMarketCap")
 ## Requirements:
 * requests, for retrieving web pages
 * lxml, for efficent web scraping
